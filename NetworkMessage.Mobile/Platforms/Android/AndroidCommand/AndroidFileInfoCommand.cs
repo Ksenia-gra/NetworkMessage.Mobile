@@ -1,7 +1,8 @@
 ﻿using NetworkMessage.Commands;
 using NetworkMessage.CommandsResults;
-using NetworkMessage.Models;
 using System.Security;
+using NetworkMessage.CommandsResults.ConcreteCommandResults;
+using NetworkMessage.DTO;
 
 namespace NetworkMessage.Mobile.Platforms.Android.AndroidCommand
 {
@@ -11,28 +12,43 @@ namespace NetworkMessage.Mobile.Platforms.Android.AndroidCommand
 
         public AndroidFileInfoCommand(string path)
         {
-            path = "/storage/emulated/0" + path.Substring(4);
+            string root = "root";
+            path = path.Replace('\\', '/');
+            int rootIndex = path.IndexOf(root, StringComparison.OrdinalIgnoreCase);
+            if (rootIndex == 0)
+            {
+                path = path[rootIndex..];
+            }
+
+            if (path.FirstOrDefault() == '/')
+            {
+                path = path[1..];
+            }
+
+            path = "/storage/emulated/0/" + path;
             Path = path;
         }
 
-        public override Task<BaseNetworkCommandResult> ExecuteAsync(CancellationToken token = default, params object[] objects)
+        public override Task<BaseNetworkCommandResult> ExecuteAsync(CancellationToken token = default,
+            params object[] objects)
         {
-            FileInfo fileInfo = new FileInfo(Path);
             BaseNetworkCommandResult fileInfoResult;
-            if (!fileInfo.Exists)
-            {
-                fileInfoResult = new FileInfoResult("File doesn't exist");
-                return Task.FromResult(fileInfoResult);
-            }
-
+            const string androidDefaultPath = "/storage/emulated/0/";
             try
             {
+                FileInfo fileInfo = new FileInfo(Path);
+                if (!fileInfo.Exists)
+                {
+                    fileInfoResult = new FileInfoResult("File doesn't exist");
+                    return Task.FromResult(fileInfoResult);
+                }
+
                 string fileName = fileInfo.Name;
-                long fileLength = fileInfo.Length;                
+                long fileLength = fileInfo.Length;
                 DateTime creationTime = fileInfo.CreationTimeUtc;
                 DateTime changingDate = fileInfo.LastWriteTimeUtc;
-                string fullName = fileInfo.FullName;
-                fileInfoResult = new FileInfoResult(new MyFileInfo(fileName, creationTime, changingDate, fileLength, fullName));
+                string fullName = fileInfo.FullName[androidDefaultPath.Length..];
+                fileInfoResult = new FileInfoResult(new FileInfoDTO(fileName, creationTime, changingDate, fileLength, fullName, FileType.File));
             }
             catch (DirectoryNotFoundException directoryNotFoundException)
             {
@@ -54,8 +70,7 @@ namespace NetworkMessage.Mobile.Platforms.Android.AndroidCommand
             {
                 fileInfoResult = new FileInfoResult(exception.Message, exception);
             }
-
-
+            
             return Task.FromResult(fileInfoResult);
         }
     }

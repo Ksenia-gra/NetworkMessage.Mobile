@@ -6,67 +6,82 @@ namespace NetworkMessage.Mobile.Platforms.Android
 {
     public class AndroidCommandFactory : ICommandFactory
     {
-        public BaseNetworkCommand CreateAmountOfOccupiedRAMCommand()
+        public INetworkCommand CreateAmountOfOccupiedRAMCommand()
+        {
+            return new AndroidAmountOfOccupiedRAMCommand();
+        }
+
+        public INetworkCommand CreateAmountOfRAMCommand()
         {
             throw new NotImplementedException();
         }
 
-        public BaseNetworkCommand CreateAmountOfRAMCommand()
-        {
-            throw new NotImplementedException();
-        }
-
-        public BaseNetworkCommand CreateBatteryChargePersentageCommand()
+        public INetworkCommand CreateBatteryChargePersentageCommand()
         {
             return new AndroidBatteryChargePersentageCommand();
         }
 
-        public BaseNetworkCommand CreateDirectoryInfoCommand(string path)
+        public INetworkCommand CreateDirectoryInfoCommand(string path)
         {
             throw new NotImplementedException();
         }
 
-        public BaseNetworkCommand CreateDownloadDirectoryCommand(string path)
+        public INetworkCommand CreateDownloadDirectoryCommand(string path)
         {
             throw new NotImplementedException();
         }        
 
-        public BaseNetworkCommand CreateDownloadFileCommand(string path)
+        public INetworkCommand CreateDownloadFileCommand(string path)
         {
             return new AndroidDownloadFileCommand(path);
         }
 
-        public BaseNetworkCommand CreateFileInfoCommand(string path)
+        public INetworkCommand CreateDrivesInfoCommand()
+        {
+            throw new NotImplementedException();
+        }
+
+        public INetworkCommand CreateFileInfoCommand(string path)
         {
             return new AndroidFileInfoCommand(path);
         }
 
-        public BaseNetworkCommand CreateGuidCommand()
+        public INetworkCommand CreateGuidCommand()
         {
             return new AndroidGuidCommand();
         }
 
-        public BaseNetworkCommand CreateMacAddressCommand()
+        public INetworkCommand CreateMacAddressCommand()
         {
             throw new NotImplementedException();
         }
 
-        public BaseNetworkCommand CreateNestedDirectoriesInfoCommand(string path)
+        public INetworkCommand CreateNestedDirectoriesInfoCommand(string path)
         {
             return new AndroidNestedDirectoriesCommand(path);
         }
 
-        public BaseNetworkCommand CreateNestedFilesInfoCommand(string path)
+        public INetworkCommand CreateNestedFilesInfoCommand(string path)
         {
             return new AndroidNestedFilesInfoCommand(path);
         }
 
-        public BaseNetworkCommand CreatePercentageOfCPUUsageCommand()
+        public INetworkCommand CreatePercentageOfCPUUsageCommand()
         {
             throw new NotImplementedException();
         }
 
-        public BaseNetworkCommand CreateScreenshotCommand()
+        public INetworkCommand CreateScreenshotCommand()
+        {
+            throw new NotImplementedException();
+        }
+
+        public INetworkCommand CreateRunningProgramsCommand()
+        {
+            throw new NotImplementedException();
+        }
+
+        public INetworkCommand CreateStartProgramCommand(string path)
         {
             throw new NotImplementedException();
         }

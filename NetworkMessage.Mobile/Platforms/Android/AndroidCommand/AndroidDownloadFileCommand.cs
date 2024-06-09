@@ -1,6 +1,7 @@
 ﻿using NetworkMessage.Commands;
 using NetworkMessage.CommandsResults;
 using System.Security;
+using NetworkMessage.CommandsResults.ConcreteCommandResults;
 
 namespace NetworkMessage.Mobile.Platforms.Android.AndroidCommand
 {
@@ -10,7 +11,20 @@ namespace NetworkMessage.Mobile.Platforms.Android.AndroidCommand
 
         public AndroidDownloadFileCommand(string path)
         {
-            path = "/storage/emulated/0" + path.Substring(4);
+            string root = "root";
+            path = path.Replace('\\', '/');
+            int rootIndex = path.IndexOf(root, StringComparison.OrdinalIgnoreCase);
+            if (rootIndex == 0)
+            {
+                path = path[rootIndex..];
+            }
+
+            if (path.FirstOrDefault() == '/')
+            {
+                path = path[1..];
+            }
+
+            path = "/storage/emulated/0/" + path;
             Path = path;
         }
 
@@ -22,34 +36,8 @@ namespace NetworkMessage.Mobile.Platforms.Android.AndroidCommand
                 loadedFileResult = new DownloadFileResult("File doesn't exist");
                 return loadedFileResult;
             }
-
-            try
-            {
-                byte[] file = await File.ReadAllBytesAsync(Path);
-                loadedFileResult = new DownloadFileResult(file);
-            }
-            catch (DirectoryNotFoundException directoryNotFoundException)
-            {
-                loadedFileResult = new DownloadFileResult("Недопустимый путь", directoryNotFoundException);
-            }
-            catch (IOException ioException)
-            {
-                loadedFileResult = new DownloadFileResult("Ошибка при чтении файла", ioException);
-            }
-            catch (SecurityException securityException)
-            {
-                loadedFileResult = new DownloadFileResult("Отсутствует необходимое разрешение", securityException);
-            }
-            catch (UnauthorizedAccessException unauthorizedAccessException)
-            {
-                loadedFileResult = new DownloadFileResult("Эта операция не поддерживается на текущей платформе", unauthorizedAccessException);
-            }
-            catch (Exception exception)
-            {
-                loadedFileResult = new DownloadFileResult(exception.Message, exception);
-            }
-
-
+            
+            loadedFileResult = new DownloadFileResult(Path);
             return loadedFileResult;
         }
     }
