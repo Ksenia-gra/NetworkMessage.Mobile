@@ -1,5 +1,6 @@
 ﻿using NetworkMessage.Commands;
 using NetworkMessage.CommandsResults;
+using NetworkMessage.CommandsResults.ConcreteCommandResults;
 
 namespace NetworkMessage.Mobile.Platforms.Android.AndroidCommand
 {

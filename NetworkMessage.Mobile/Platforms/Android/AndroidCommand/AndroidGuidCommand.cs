@@ -1,7 +1,9 @@
-﻿using NetworkMessage.Commands;
+﻿using Android.Content;
+using Android.Provider;
+using NetworkMessage.Commands;
 using NetworkMessage.CommandsResults;
-using static Android.Provider.Settings;
-using AndroidMaui = Android;
+using NetworkMessage.CommandsResults.ConcreteCommandResults;
+using AndroidApp = Android.App.Application;
 
 namespace NetworkMessage.Mobile.Platforms.Android.AndroidCommand
 {
@@ -9,8 +11,8 @@ namespace NetworkMessage.Mobile.Platforms.Android.AndroidCommand
     {
         public override Task<BaseNetworkCommandResult> ExecuteAsync(CancellationToken token = default, params object[] objects)
         {
-            var context = AndroidMaui.App.Application.Context;
-            string guid = Secure.GetString(context.ContentResolver, Secure.AndroidId);
+            Context context = AndroidApp.Context;
+            string guid = Settings.Secure.GetString(context.ContentResolver, Settings.Secure.AndroidId);
             BaseNetworkCommandResult result = new DeviceGuidResult(guid);
             return Task.FromResult(result);
         }

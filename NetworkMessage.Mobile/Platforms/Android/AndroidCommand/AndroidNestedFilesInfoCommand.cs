@@ -1,7 +1,8 @@
 ﻿using NetworkMessage.Commands;
 using NetworkMessage.CommandsResults;
-using NetworkMessage.Models;
 using System.Security;
+using NetworkMessage.CommandsResults.ConcreteCommandResults;
+using NetworkMessage.DTO;
 
 namespace NetworkMessage.Mobile.Platforms.Android.AndroidCommand
 {
@@ -11,14 +12,28 @@ namespace NetworkMessage.Mobile.Platforms.Android.AndroidCommand
 
         public AndroidNestedFilesInfoCommand(string path)
         {
-            path = "/storage/emulated/0" + path.Substring(4);
+            string root = "root";
+            path = path.Replace('\\', '/');
+            int rootIndex = path.IndexOf(root, StringComparison.OrdinalIgnoreCase);
+            if (rootIndex == 0)
+            {
+                path = path[rootIndex..];
+            }
+
+            if (path.FirstOrDefault() == '/')
+            {
+                path = path[1..];
+            }
+
+            path = "/storage/emulated/0/" + path;
             Path = path;
         }
 
         public override Task<BaseNetworkCommandResult> ExecuteAsync(CancellationToken token = default, params object[] objects)
         {
-            DirectoryInfo directoryInfo = new DirectoryInfo(Path);
             BaseNetworkCommandResult nestedFilesInfo;
+            const string androidDefaultPath = "/storage/emulated/0/";
+            DirectoryInfo directoryInfo = new DirectoryInfo(Path);
             if (!directoryInfo.Exists)
             {
                 nestedFilesInfo = new NestedFilesInfoResult("File doesn't exist");
@@ -27,8 +42,11 @@ namespace NetworkMessage.Mobile.Platforms.Android.AndroidCommand
 
             try
             {
-                IEnumerable<MyFileInfo> filesInfo 
-                    = directoryInfo.GetFiles().Select(f => new MyFileInfo(f.Name, f.CreationTimeUtc, f.LastWriteTimeUtc, f.Length, f.FullName));
+                IEnumerable<FileInfoDTO> filesInfo = directoryInfo.GetFiles().Select(f =>
+                {
+                    string fullName = f.FullName[androidDefaultPath.Length..];
+                    return new FileInfoDTO(f.Name, f.CreationTimeUtc, f.LastWriteTimeUtc, f.Length, fullName, FileType.File);
+                });
                 nestedFilesInfo = new NestedFilesInfoResult(filesInfo);
             }
             catch (DirectoryNotFoundException directoryNotFoundException)
