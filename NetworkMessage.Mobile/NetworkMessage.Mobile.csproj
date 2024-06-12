@@ -6,7 +6,7 @@
 		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
 		<!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
 		<UseMaui>true</UseMaui>
-		<Version>1.0.0</Version>
+		<Version>1.1.0</Version>
 		<Authors>gurynych</Authors>
     <UseMauiEssentials>true</UseMauiEssentials>
 		<SingleProject>true</SingleProject>
@@ -22,16 +22,12 @@
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-	  <PackageReference Include="NetworkMessage" Version="1.2.1" />
-	</ItemGroup>
-
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
-	  <PackageReference Include="NetworkMessage" Version="1.2.1" />
+	  <PackageReference Include="NetworkMessage" Version="1.2.2" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-ios'">
-	  <PackageReference Include="NetworkMessage" Version="1.2.1" />
+	  <PackageReference Include="NetworkMessage" Version="1.2.2" />
 	</ItemGroup>
 
 </Project>
